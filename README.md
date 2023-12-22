@@ -15,7 +15,3 @@ Updating...
 ## Development
 
 Updating...
-
-## Reference
-
-[sl-currency-tool js](https://git.duowan.com/webs/shopline-trade/shopline-currency-tools)
