@@ -1,6 +1,6 @@
 # currency-tool-rs
 
-使用 `rust` 实现的货币工具。
+A library was wrote by rust for currency format tool.
 
 ## Install
 
@@ -10,12 +10,12 @@ cargo install currency-tool-rs
 
 ## Usage
 
-更新中...
+Updating...
 
 ## Development
 
-更新中...
+Updating...
 
-## 相关链接
+## Reference
 
 [sl-currency-tool js](https://git.duowan.com/webs/shopline-trade/shopline-currency-tools)
