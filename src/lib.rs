@@ -1,5 +1,7 @@
 mod default_config;
 
+use std::option;
+
 pub use crate::default_config::*;
 
 fn format_number_by_group_symbol(num: f32, symbol: String) -> String {
@@ -8,26 +10,42 @@ fn format_number_by_group_symbol(num: f32, symbol: String) -> String {
 
 pub struct CurrencyRate {
   usd: f32,
-  cny: f32,
-  my: f32,
-  jpy: f32
+  cny: Option<f32>,
+  my: Option<f32>,
+  jpy: Option<f32>,
+  gbp: f32
 }
 
 pub struct FormatOption {
-  from: String,
-  to: String,
+  from: &'static str,
+  to: &'static str,
   currency_rates: CurrencyRate
 }
 
-fn basic_format(value: f32, with_currency: bool, option: FormatOption) -> String {
-  String::from("5.2")
+pub fn convert_calc(value: f32, from: &'static str, to: &'static str, rates: CurrencyRate) -> f32 {
+  if from == to {
+    return value
+  }
+
+  return (value * (rates.usd)) / (rates.gbp)
 }
 
-pub fn format(value: f32, option: FormatOption) -> String {
+fn basic_format(value: f32, with_currency: bool, option: FormatOption) -> &'static str {
+  let to = option.to;
+  let from = option.from;
+  let rates = option.currency_rates; 
+
+  let calc_value = convert_calc(value, to, from, rates);
+
+
+
+}
+
+pub fn format(value: f32, option: FormatOption) -> &'static str {
   basic_format(value, true, option)
 }
 
-pub fn format_without_currency(value: f32, option: FormatOption) -> String {
+pub fn format_without_currency(value: f32, option: FormatOption) -> &'static str {
   basic_format(value, false, option)
 }
 
@@ -63,14 +81,15 @@ mod test {
   #[test]
   fn basic_format() {
     assert_eq!(format(100.0, FormatOption {
-      from: String::from("USD"),
-      to: String::from("EUR"),
+      from: "USD",
+      to: "GBP",
       currency_rates: CurrencyRate{
-        usd: 0.7,
-        jpy: 0.4,
-        my: 0.2,
-        cny: 1.0
+        usd: 1.0,
+        gbp: 0.808686,
+        cny: None,
+        jpy: None,
+        my: None
       }
-    }), "€0,92 EUR");
+    }), "£1,865.07 GBP");
   }
 }

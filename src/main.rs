@@ -7,4 +7,5 @@ fn main() {
     let prefix = SymbolOrderEnum::Prefix;
 
     println!("{}", prefix);
+    assert_eq!("USD", "USD");
 }
