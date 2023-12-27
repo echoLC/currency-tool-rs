@@ -1,5 +1,43 @@
-const DEFAULT_CURRENCY: &str = "USD"; 
+use::std::fmt;
+
+const DEFAULT_CURRENCY: &str = "CNY"; 
 const DEFAULT_RATE: f32 = 0.7;
+const DEFAULT_DIGIT: u32 = 2;
+const DEFAULT_FORMAT: &str = "{{amount}}";
+const DEFAULT_FORMAT_SYMBOL: &str = "amount";
+
+struct BasicFormatMap {
+  value: &'static str,
+  /** 整数与小数部分的分隔符 */
+  decimal_symbol: &'static str,
+  /** 千分位分隔符 */
+  group_symbol: &'static str,
+  format: &'static str
+}
+
+struct StandardFormatMap {
+  amount: BasicFormatMap,
+  amount_no_decimals: BasicFormatMap,
+  amount_with_comma_separator: BasicFormatMap,
+  amount_no_decimals_with_comma_separator: BasicFormatMap,
+  amount_with_apostrophe_separator: BasicFormatMap,
+  amount_no_decimals_with_space_separator: BasicFormatMap,
+  amount_with_space_separator: BasicFormatMap
+}
+
+pub enum SymbolOrderEnum {
+  Prefix,
+  Suffix
+}
+
+impl fmt::Display for SymbolOrderEnum {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    match self {
+        SymbolOrderEnum::Prefix => write!(f, "prefix"),
+        SymbolOrderEnum::Suffix => write!(f, "suffix")
+    }
+  }    
+}
 
 pub fn get_default_currency () -> &'static str {
   DEFAULT_CURRENCY
@@ -9,8 +47,61 @@ pub fn get_default_rate () -> f32 {
   DEFAULT_RATE
 }
 
-pub fn get_default_preset () {
-
+pub fn get_default_digit () -> u32 {
+  DEFAULT_DIGIT
 }
 
-pub fn get_default_currency_config () {}
+pub fn get_default_format () -> &'static str {
+  DEFAULT_FORMAT
+}
+
+pub fn get_default_format_symbol () -> &'static str {
+  DEFAULT_FORMAT_SYMBOL
+}
+
+pub fn get_default_standard_format_map () -> StandardFormatMap {
+   StandardFormatMap {
+    amount: BasicFormatMap {
+      value: "amount",
+      decimal_symbol: ".",
+      group_symbol: ",",
+      format: "amount",
+    },
+    amount_no_decimals: BasicFormatMap{
+      value: "amount_no_decimals",
+      decimal_symbol: "",
+      group_symbol: ",",
+      format: "amount_no_decimals",
+    },
+    amount_with_comma_separator: BasicFormatMap{
+      value: "amount_with_comma_separator",
+      decimal_symbol: ",",
+      group_symbol: ".",
+      format: "amount_with_comma_separator",
+    },
+    amount_no_decimals_with_comma_separator: BasicFormatMap{
+      value: "amount_no_decimals_with_comma_separator",
+      decimal_symbol: "",
+      group_symbol: ".",
+      format: "amount_no_decimals_with_comma_separator",
+    },
+    amount_with_apostrophe_separator: BasicFormatMap{
+      value: "amount_with_apostrophe_separator",
+      decimal_symbol: ".",
+      group_symbol: " ",
+      format: "amount_with_apostrophe_separator",
+    },
+    amount_no_decimals_with_space_separator: BasicFormatMap{
+      value: "amount_no_decimals_with_space_separator",
+      decimal_symbol: "",
+      group_symbol: " ",
+      format: "amount_no_decimals_with_space_separator",
+    },
+    amount_with_space_separator: BasicFormatMap {
+      value: "amount_with_space_separator",
+      decimal_symbol: ",",
+      group_symbol: " ",
+      format: "amount_with_space_separator",
+    },
+  }
+}
