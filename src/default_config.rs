@@ -6,23 +6,23 @@ const DEFAULT_DIGIT: u32 = 2;
 const DEFAULT_FORMAT: &str = "{{amount}}";
 const DEFAULT_FORMAT_SYMBOL: &str = "amount";
 
-struct BasicFormatMap {
-  value: &'static str,
+pub struct BasicFormatMap {
+  pub value: &'static str,
   /** 整数与小数部分的分隔符 */
-  decimal_symbol: &'static str,
+  pub decimal_symbol: &'static str,
   /** 千分位分隔符 */
-  group_symbol: &'static str,
-  format: &'static str
+  pub group_symbol: &'static str,
+  pub format: &'static str
 }
 
-struct StandardFormatMap {
-  amount: BasicFormatMap,
-  amount_no_decimals: BasicFormatMap,
-  amount_with_comma_separator: BasicFormatMap,
-  amount_no_decimals_with_comma_separator: BasicFormatMap,
-  amount_with_apostrophe_separator: BasicFormatMap,
-  amount_no_decimals_with_space_separator: BasicFormatMap,
-  amount_with_space_separator: BasicFormatMap
+pub struct StandardFormatMap {
+  pub amount: BasicFormatMap,
+  pub amount_no_decimals: BasicFormatMap,
+  pub amount_with_comma_separator: BasicFormatMap,
+  pub amount_no_decimals_with_comma_separator: BasicFormatMap,
+  pub amount_with_apostrophe_separator: BasicFormatMap,
+  pub amount_no_decimals_with_space_separator: BasicFormatMap,
+  pub amount_with_space_separator: BasicFormatMap
 }
 
 pub enum SymbolOrderEnum {
