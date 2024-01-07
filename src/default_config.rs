@@ -25,18 +25,10 @@ pub struct StandardFormatMap {
   pub amount_with_space_separator: BasicFormatMap
 }
 
+#[derive(Debug)]
 pub enum SymbolOrderEnum {
   Prefix,
   Suffix
-}
-
-impl fmt::Display for SymbolOrderEnum {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    match self {
-        SymbolOrderEnum::Prefix => write!(f, "prefix"),
-        SymbolOrderEnum::Suffix => write!(f, "suffix")
-    }
-  }    
 }
 
 pub fn get_default_currency () -> &'static str {
