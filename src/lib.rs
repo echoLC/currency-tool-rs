@@ -3,8 +3,8 @@ mod default_config;
 pub use crate::default_config::*;
 
 pub struct CurrencyRates {
-  USD: f32,
-  GBP: f32
+  usd: f64,
+  gbp: f64
 }
 
 pub struct CommonFormatOption {
@@ -13,8 +13,18 @@ pub struct CommonFormatOption {
   currency_rates: CurrencyRates
 }
 
+
+
 pub fn format(value: f64, options: CommonFormatOption) -> String {
-  return String::from("£1,865.07 GBP")
+  let to = options.to;
+  let currency_rates = options.currency_rates;
+  let from_rate = currency_rates.usd;
+  let to_rate = currency_rates.gbp;
+  let convert_value = value * to_rate / from_rate;
+  let convert_value_str = format!("{:.2}", convert_value);
+
+
+  String::from("£") + &convert_value_str + " " + &to
 }
 
 #[cfg(test)]
@@ -52,9 +62,9 @@ mod test {
       from: String::from("USD"),
       to: String::from("GBP"),
       currency_rates: CurrencyRates{
-        USD: 1.0,
-        GBP: 0.808686,
+        usd: 1.0,
+        gbp: 0.808686,
       }
-    }), "£1,865.07 GBP");
+    }), "£80.87 GBP");
   }
 }
