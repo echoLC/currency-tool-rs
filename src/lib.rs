@@ -13,7 +13,20 @@ pub struct CommonFormatOption {
   currency_rates: CurrencyRates
 }
 
+fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
+  let mut s = String::new();
 
+  let a = value.chars().rev().enumerate();
+
+  for(index, val) in a {
+    if index != 0 && index % 3 == 0 {
+      s.insert(0, ',');
+    }
+    s.insert(0, val);
+  }
+
+  s
+}
 
 pub fn format(value: f64, options: CommonFormatOption) -> String {
   let to = options.to;
@@ -22,9 +35,13 @@ pub fn format(value: f64, options: CommonFormatOption) -> String {
   let to_rate = currency_rates.gbp;
   let convert_value = value * to_rate / from_rate;
   let convert_value_str = format!("{:.2}", convert_value);
+  let convert_split_arr: Vec<&str> = convert_value_str.split(".").collect();
+  let convert_int_part = convert_split_arr[0];
+
+  let format_str = pretty_print_with_symbol(convert_int_part, ',');
 
 
-  String::from("£") + &convert_value_str + " " + &to
+  String::from("£") + &format_str + "." + convert_split_arr[1] + " " + &to
 }
 
 #[cfg(test)]
@@ -77,6 +94,6 @@ mod test {
         usd: 1.0,
         gbp: 0.808686,
       }
-    }), "£1,778,54.31 GBP");
+    }), "£177,854.31 GBP");
   }
 }
