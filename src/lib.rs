@@ -20,7 +20,7 @@ fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
 
   for(index, val) in a {
     if index != 0 && index % 3 == 0 {
-      s.insert(0, ',');
+      s.insert(0, symbol);
     }
     s.insert(0, val);
   }
