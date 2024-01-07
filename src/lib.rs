@@ -67,4 +67,16 @@ mod test {
       }
     }), "£80.87 GBP");
   }
+
+  #[test]
+  fn split_by_symbol_format() {
+    assert_eq!(format(219930.00, CommonFormatOption {
+      from: String::from("USD"),
+      to: String::from("GBP"),
+      currency_rates: CurrencyRates{
+        usd: 1.0,
+        gbp: 0.808686,
+      }
+    }), "£1,778,54.31 GBP");
+  }
 }
