@@ -28,6 +28,16 @@ fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
   s
 }
 
+fn get_currency_symbol (currency: Option<&str>) -> String {
+  match currency {
+    Some("GBP") => String::from("£"),
+    Some("USD") => String::from("$"),
+    Some("CNY")  => String::from("￥"),
+    Some(_)  => String::from("$"),
+    None => String::from("$")
+  }
+}
+
 pub fn format(value: f64, options: CommonFormatOption) -> String {
   let to = options.to;
   let currency_rates = options.currency_rates;
@@ -37,11 +47,12 @@ pub fn format(value: f64, options: CommonFormatOption) -> String {
   let convert_value_str = format!("{:.2}", convert_value);
   let convert_split_arr: Vec<&str> = convert_value_str.split(".").collect();
   let convert_int_part = convert_split_arr[0];
+  let currency_symbol = get_currency_symbol(Some(&to)); 
 
   let format_str = pretty_print_with_symbol(convert_int_part, ',');
 
 
-  String::from("£") + &format_str + "." + convert_split_arr[1] + " " + &to
+  currency_symbol + &format_str + "." + convert_split_arr[1] + " " + &to
 }
 
 #[cfg(test)]
@@ -86,7 +97,7 @@ mod test {
   }
 
   #[test]
-  fn split_by_symbol_format() {
+  fn pretty_format() {
     assert_eq!(format(219930.00, CommonFormatOption {
       from: String::from("USD"),
       to: String::from("GBP"),
@@ -95,5 +106,17 @@ mod test {
         gbp: 0.808686,
       }
     }), "£177,854.31 GBP");
+  }
+
+  #[test]
+  fn pretty_format_currency_symbol() {
+    assert_eq!(format(219930.00, CommonFormatOption {
+      from: String::from("USD"),
+      to: String::from("CNY"),
+      currency_rates: CurrencyRates{
+        usd: 1.0,
+        gbp: 0.808686,
+      }
+    }), "￥177,854.31 CNY");
   }
 }
