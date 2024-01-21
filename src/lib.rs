@@ -1,6 +1,5 @@
 mod default_config;
 
-
 pub use crate::default_config::*;
 
 #[derive(Debug, Clone)]
@@ -48,7 +47,7 @@ fn get_currency_symbol (currency: Option<&str>) -> String {
   }
 }
 
-fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRates) -> ConvertRates  {
+fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRates) -> Result<ConvertRates, String>  {
 
   let mut to_rate: f64 = 1.0;
   let mut from_rate: f64 = 1.0;
@@ -59,6 +58,8 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
     from_rate = rates.gbp;
   } else if from_currency == "CNY" {
     from_rate = rates.cny;
+  } else {
+    return Err(String::from("unknown currency"))
   }
 
   if to_currency == "USD" {
@@ -67,17 +68,24 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
     to_rate = rates.gbp;
   } else if to_currency == "CNY" {
     to_rate = rates.cny;
+  } else {
+    return Err(String::from("unknown currency"))
   }
 
-  ConvertRates{
+  Ok(ConvertRates{
     to: to_rate,
     from: from_rate
-  }
+  })
 }
 
 pub fn format(value: f64, options: CommonFormatOption) -> String {
   let to = options.to;
-  let currency_rates = get_convert_rates(&options.from, &to, options.currency_rates);
+  let currency_rates_result = get_convert_rates(&options.from, &to, options.currency_rates);
+
+  let currency_rates = match currency_rates_result  {
+    Ok(value) => value,
+    Err(message) => panic!("error message:{}", message),
+  };
 
   let convert_value = value * currency_rates.to / currency_rates.from;
   let convert_value_str = format!("{:.2}", convert_value);
@@ -147,19 +155,6 @@ mod test {
   }
 
   #[test]
-  fn pretty_format_currency_symbol() {
-    assert_eq!(format(219930.00, CommonFormatOption {
-      from: String::from("USD"),
-      to: String::from("CNY"),
-      currency_rates: CurrencyRates{
-        usd: 1.0,
-        gbp: 0.808686,
-        cny: 0.140449
-      }
-    }), "￥177,854.31 CNY");
-  }
-
-  #[test]
   fn format_different_rates() {
     assert_eq!(format(219930.00, CommonFormatOption {
       from: String::from("USD"),
@@ -170,5 +165,19 @@ mod test {
         cny: 0.140449
       }
     }), "￥30,888.95 CNY");
+  }
+
+  #[test]
+  #[should_panic]
+  fn format_unknown_currency() {
+    format(219930.00, CommonFormatOption {
+      from: String::from("JPY"),
+      to: String::from("CNY"),
+      currency_rates: CurrencyRates{
+        usd: 1.0,
+        gbp: 0.808686,
+        cny: 0.140449
+      }
+    });
   }
 }
