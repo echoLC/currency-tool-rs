@@ -78,6 +78,24 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
   })
 }
 
+/** `format` 将传入金额根据相关的货币进行汇率转换，并进行美化展示
+ 
+ # Examples
+
+ ```
+  let convert_value = format(219930.00, CommonFormatOption {
+    from: String::from("USD"),
+    to: String::from("CNY"),
+    currency_rates: CurrencyRates{
+      usd: 1.0,
+      gbp: 0.808686,
+      cny: 0.140449
+    }
+  });
+
+  assert_eq!(convert_value, "￥30,888.95 CNY");
+ ```  
+ */
 pub fn format(value: f64, options: CommonFormatOption) -> String {
   let to = options.to;
   let currency_rates_result = get_convert_rates(&options.from, &to, options.currency_rates);

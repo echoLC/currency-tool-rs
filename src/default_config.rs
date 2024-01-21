@@ -1,4 +1,4 @@
-use::std::fmt;
+/*! default_config 用于维护货币转换的一些默认常量 */
 
 const DEFAULT_CURRENCY: &str = "CNY"; 
 const DEFAULT_RATE: f32 = 0.7;
