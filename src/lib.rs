@@ -63,19 +63,6 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
   })
 }
 
-/** `padEnd` 从末尾开始，将字符串补充对应的长度
- 
- # Examples
-
- ```
-  let value = pad_end('12', 5, '0');
-  assert_eq!(value, "12000");
- ``` 
-*/
-pub fn pad_end(target: String, target_len: usize, symbol: char) -> String {
-  String::from("pad_end")
-}
-
 /** `pretty_print_with_symbol` 使用指定的分隔符美化字符串金额
   
   # Examples
