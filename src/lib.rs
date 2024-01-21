@@ -13,7 +13,8 @@ pub struct CurrencyRates {
 pub struct CommonFormatOption {
   from: String,
   to: String,
-  currency_rates: CurrencyRates
+  currency_rates: CurrencyRates,
+  with_currency: bool,
 }
 
 pub struct ConvertRates {
@@ -21,7 +22,18 @@ pub struct ConvertRates {
   from: f64
 }
 
-fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
+/** `pretty_print_with_symbol` 使用指定的分隔符美化字符串金额
+  
+  # Examples
+  ```
+   let value1 = pretty_print_with_symbol("12345.12", ',');
+   assert_eq!(value1, "12,345.12");
+
+   let value2 = pretty_print_with_symbol("12.12", ',');
+   assert_eq!(value2, "12.12");
+  ```
+ */
+pub fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
   let mut s = String::new();
 
   let a = value.chars().rev().enumerate();
@@ -78,6 +90,15 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
   })
 }
 
+/** `convert_value_with_rates` 将传入金额根据相关的货币进行汇率转换
+
+  # Examples
+
+  ```
+    let value = convert_value_with_rates(0.140449, 1.0, 100);
+    assert_eq!(value, "14.04");
+  ```  
+*/
 pub fn convert_value_with_rates(to_rate: f64, from_rate: f64, value: f64) -> String {
   if to_rate == from_rate {
     return format!("{:.2}", value)
@@ -122,8 +143,14 @@ pub fn format(value: f64, options: CommonFormatOption) -> String {
 
   let format_str = pretty_print_with_symbol(convert_int_part, ',');
 
+  let mut result = currency_symbol + &format_str + "." + convert_split_arr[1];
 
-  currency_symbol + &format_str + "." + convert_split_arr[1] + " " + &to
+  if options.with_currency {
+    result = result + " " + &to;
+  }
+
+
+  result
 }
 
 #[cfg(test)]
@@ -164,7 +191,8 @@ mod test {
         usd: 1.0,
         gbp: 0.808686,
         cny: 0.140449
-      }
+      },
+      with_currency: true,
     }), "£80.87 GBP");
   }
 
@@ -177,7 +205,8 @@ mod test {
         usd: 1.0,
         gbp: 0.808686,
         cny: 0.140449
-      }
+      },
+      with_currency: true,
     }), "£177,854.31 GBP");
   }
 
@@ -190,7 +219,8 @@ mod test {
         usd: 1.0,
         gbp: 0.808686,
         cny: 0.140449
-      }
+      },
+      with_currency: true,
     }), "￥30,888.95 CNY");
   }
 
@@ -204,7 +234,22 @@ mod test {
         usd: 1.0,
         gbp: 0.808686,
         cny: 0.140449
-      }
+      },
+      with_currency: true,
     });
+  }
+
+  #[test]
+  fn format_without_currency() {
+    assert_eq!(format(219930.00, CommonFormatOption {
+      from: String::from("USD"),
+      to: String::from("CNY"),
+      currency_rates: CurrencyRates{
+        usd: 1.0,
+        gbp: 0.808686,
+        cny: 0.140449
+      },
+      with_currency: false,
+    }), "￥30,888.95");
   }
 }
