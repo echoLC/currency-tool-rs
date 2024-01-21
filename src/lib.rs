@@ -22,33 +22,6 @@ pub struct ConvertRates {
   from: f64
 }
 
-/** `pretty_print_with_symbol` 使用指定的分隔符美化字符串金额
-  
-  # Examples
-  ```
-   let value1 = pretty_print_with_symbol("12345.12", ',');
-   assert_eq!(value1, "12,345.12");
-
-   let value2 = pretty_print_with_symbol("12.12", ',');
-   assert_eq!(value2, "12.12");
-  ```
- */
-pub fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
-  let mut s = String::new();
-
-  let a = value.chars().rev().enumerate();
-
-  for(index, val) in a {
-
-    if index != 0 && index % 3 == 0 {
-      s.insert(0, symbol);
-    }
-    s.insert(0, val);
-  }
-
-  s
-}
-
 fn get_currency_symbol (currency: Option<&str>) -> String {
   match currency {
     Some("GBP") => String::from("£"),
@@ -88,6 +61,46 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
     to: to_rate,
     from: from_rate
   })
+}
+
+/** `padEnd` 从末尾开始，将字符串补充对应的长度
+ 
+ # Examples
+
+ ```
+  let value = pad_end('12', 5, '0');
+  assert_eq!(value, "12000");
+ ``` 
+*/
+pub fn pad_end(target: String, target_len: usize, symbol: char) -> String {
+  String::from("pad_end")
+}
+
+/** `pretty_print_with_symbol` 使用指定的分隔符美化字符串金额
+  
+  # Examples
+  ```
+   let value1 = pretty_print_with_symbol("12345.12", ',');
+   assert_eq!(value1, "12,345.12");
+
+   let value2 = pretty_print_with_symbol("12.12", ',');
+   assert_eq!(value2, "12.12");
+  ```
+ */
+pub fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
+  let mut s = String::new();
+
+  let a = value.chars().rev().enumerate();
+
+  for(index, val) in a {
+
+    if index != 0 && index % 3 == 0 {
+      s.insert(0, symbol);
+    }
+    s.insert(0, val);
+  }
+
+  s
 }
 
 /** `convert_value_with_rates` 将传入金额根据相关的货币进行汇率转换
@@ -251,5 +264,10 @@ mod test {
       },
       with_currency: false,
     }), "￥30,888.95");
+  }
+
+  #[test]
+  fn basic_convert_value_with_rates() {
+    assert_eq!(convert_value_with_rates(1.0, 1.0, 12.0), "12.00");
   }
 }
