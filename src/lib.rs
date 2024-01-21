@@ -78,6 +78,16 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
   })
 }
 
+pub fn convert_value_with_rates(to_rate: f64, from_rate: f64, value: f64) -> String {
+  if to_rate == from_rate {
+    return format!("{:.2}", value)
+  }
+
+  let convert_value = value * to_rate / from_rate;
+
+  format!("{:.2}", convert_value)
+}
+
 /** `format` 将传入金额根据相关的货币进行汇率转换，并进行美化展示
  
  # Examples
@@ -105,8 +115,7 @@ pub fn format(value: f64, options: CommonFormatOption) -> String {
     Err(message) => panic!("error message:{}", message),
   };
 
-  let convert_value = value * currency_rates.to / currency_rates.from;
-  let convert_value_str = format!("{:.2}", convert_value);
+  let convert_value_str = convert_value_with_rates(currency_rates.to, currency_rates.from, value);
   let convert_split_arr: Vec<&str> = convert_value_str.split(".").collect();
   let convert_int_part = convert_split_arr[0];
   let currency_symbol = get_currency_symbol(Some(&to)); 
