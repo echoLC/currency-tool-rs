@@ -154,7 +154,7 @@ pub fn format(value: f64, options: CommonFormatOption) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod unit_test {
   use super::*;
 
   #[test]
