@@ -4,17 +4,17 @@ pub use crate::default_config::*;
 
 #[derive(Debug, Clone)]
 pub struct CurrencyRates {
-  usd: f64,
-  gbp: f64,
-  cny: f64
+  pub usd: f64,
+  pub gbp: f64,
+  pub cny: f64
 }
 
 #[derive(Debug, Clone)]
 pub struct CommonFormatOption {
-  from: String,
-  to: String,
-  currency_rates: CurrencyRates,
-  with_currency: bool,
+  pub from: String,
+  pub to: String,
+  pub currency_rates: CurrencyRates,
+  pub with_currency: bool,
 }
 
 pub struct ConvertRates {
@@ -67,11 +67,13 @@ fn get_convert_rates(from_currency: &str, to_currency: &str, rates: CurrencyRate
   
   # Examples
   ```
-   let value1 = pretty_print_with_symbol("12345.12", ',');
-   assert_eq!(value1, "12,345.12");
+   use currency_tool_rs::{pretty_print_with_symbol};
 
-   let value2 = pretty_print_with_symbol("12.12", ',');
-   assert_eq!(value2, "12.12");
+   let value1 = pretty_print_with_symbol("12345", ',');
+   assert_eq!(value1, "12,345");
+
+   let value2 = pretty_print_with_symbol("12", ',');
+   assert_eq!(value2, "12");
   ```
  */
 pub fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
@@ -95,7 +97,9 @@ pub fn pretty_print_with_symbol (value: &str, symbol: char) -> String {
   # Examples
 
   ```
-    let value = convert_value_with_rates(0.140449, 1.0, 100);
+    use currency_tool_rs::{convert_value_with_rates};
+
+    let value = convert_value_with_rates(0.140449, 1.0, 100.0);
     assert_eq!(value, "14.04");
   ```  
 */
@@ -114,6 +118,8 @@ pub fn convert_value_with_rates(to_rate: f64, from_rate: f64, value: f64) -> Str
  # Examples
 
  ```
+  use currency_tool_rs::{currency_format, CommonFormatOption, CurrencyRates};
+
   let convert_value = currency_format(219930.00, CommonFormatOption {
     from: String::from("USD"),
     to: String::from("CNY"),
@@ -121,7 +127,8 @@ pub fn convert_value_with_rates(to_rate: f64, from_rate: f64, value: f64) -> Str
       usd: 1.0,
       gbp: 0.808686,
       cny: 0.140449
-    }
+    },
+    with_currency: true
   });
 
   assert_eq!(convert_value, "￥30,888.95 CNY");
