@@ -114,7 +114,7 @@ pub fn convert_value_with_rates(to_rate: f64, from_rate: f64, value: f64) -> Str
  # Examples
 
  ```
-  let convert_value = format(219930.00, CommonFormatOption {
+  let convert_value = currency_format(219930.00, CommonFormatOption {
     from: String::from("USD"),
     to: String::from("CNY"),
     currency_rates: CurrencyRates{
@@ -127,7 +127,7 @@ pub fn convert_value_with_rates(to_rate: f64, from_rate: f64, value: f64) -> Str
   assert_eq!(convert_value, "￥30,888.95 CNY");
  ```  
  */
-pub fn format(value: f64, options: CommonFormatOption) -> String {
+pub fn currency_format(value: f64, options: CommonFormatOption) -> String {
   let to = options.to;
   let currency_rates_result = get_convert_rates(&options.from, &to, options.currency_rates);
 
@@ -184,7 +184,7 @@ mod unit_test {
 
   #[test]
   fn basic_format() {
-    assert_eq!(format(100.0, CommonFormatOption {
+    assert_eq!(currency_format(100.0, CommonFormatOption {
       from: String::from("USD"),
       to: String::from("GBP"),
       currency_rates: CurrencyRates{
@@ -198,7 +198,7 @@ mod unit_test {
 
   #[test]
   fn pretty_format() {
-    assert_eq!(format(219930.00, CommonFormatOption {
+    assert_eq!(currency_format(219930.00, CommonFormatOption {
       from: String::from("USD"),
       to: String::from("GBP"),
       currency_rates: CurrencyRates{
@@ -212,7 +212,7 @@ mod unit_test {
 
   #[test]
   fn format_different_rates() {
-    assert_eq!(format(219930.00, CommonFormatOption {
+    assert_eq!(currency_format(219930.00, CommonFormatOption {
       from: String::from("USD"),
       to: String::from("CNY"),
       currency_rates: CurrencyRates{
@@ -227,7 +227,7 @@ mod unit_test {
   #[test]
   #[should_panic]
   fn format_unknown_currency() {
-    format(219930.00, CommonFormatOption {
+    currency_format(219930.00, CommonFormatOption {
       from: String::from("JPY"),
       to: String::from("CNY"),
       currency_rates: CurrencyRates{
@@ -241,7 +241,7 @@ mod unit_test {
 
   #[test]
   fn format_without_currency() {
-    assert_eq!(format(219930.00, CommonFormatOption {
+    assert_eq!(currency_format(219930.00, CommonFormatOption {
       from: String::from("USD"),
       to: String::from("CNY"),
       currency_rates: CurrencyRates{
