@@ -160,6 +160,20 @@ pub fn currency_format(value: f64, options: CommonFormatOption) -> String {
   result
 }
 
+/** `f64_to_int` 将浮点数包括小数部分转换成整数
+ 
+ # Examples
+  ```
+  use currency_tool_rs::{f64_to_int};
+
+  assert_eq!(f64_to_int(12.12, 2), 1212);
+  ```
+ */
+pub fn f64_to_int (value: f64, digits: u32) -> i64 {
+  let base: i32 = 10;
+  (value * base.pow(digits) as f64).round() as i64
+}
+
 #[cfg(test)]
 mod unit_test {
   use super::*;
@@ -263,5 +277,15 @@ mod unit_test {
   #[test]
   fn basic_convert_value_with_rates() {
     assert_eq!(convert_value_with_rates(1.0, 1.0, 12.0), "12.00");
+  }
+
+  #[test]
+  fn basic_f64_to_int() {
+    assert_eq!(f64_to_int(12.12, 2), 1212);
+  }
+
+  #[test]
+  fn multi_decimals_f64_to_int() {
+    assert_eq!(f64_to_int(12.123, 3), 12123);
   }
 }
