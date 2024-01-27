@@ -351,4 +351,12 @@ mod unit_test {
     assert_eq!(result2.integer, 12);
     assert_eq!(result3.fraction, Some(12346));
   }
+
+  #[test]
+  fn no_precision_get_f64_integer_and_fraction() {
+    let result = get_f64_integer_and_fraction(12.123, 0);
+
+    assert_eq!(result.integer, 12);
+    assert_eq!(result.fraction, None);
+  }
 }
