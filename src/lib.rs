@@ -1,7 +1,5 @@
 mod default_config;
 
-use std::collections::btree_map::Values;
-
 pub use crate::default_config::*;
 
 #[derive(Debug, Clone)]
@@ -177,15 +175,15 @@ pub fn f64_to_int (value: f64, digits: u32) -> i64 {
 }
 
 pub struct FloatInfo {
-  integer: i64,
-  fraction: Option<i64>
+  pub integer: i64,
+  pub fraction: Option<i64>
 }
 
 /** `get_f64_integer_and_fraction` 获取浮点数的小数和整数部分并返回
  
  # Examples
   ```
-  use currency_tool_rs::{get_f64_integer_and_fraction};
+  use currency_tool_rs::{get_f64_integer_and_fraction, FloatInfo};
 
   let result = get_f64_integer_and_fraction(12.12, 2);
 
@@ -346,10 +344,11 @@ mod unit_test {
   fn more_decimals_get_f64_integer_and_fraction() {
     let result = get_f64_integer_and_fraction(12.123, 2);
     let result2 = get_f64_integer_and_fraction(12.123, 3);
+    let result3 = get_f64_integer_and_fraction(12.12345678, 5);
 
     assert_eq!(result.integer, 12);
     assert_eq!(result.fraction, Some(12));
     assert_eq!(result2.integer, 12);
-    assert_eq!(result2.fraction, Some(123));
+    assert_eq!(result3.fraction, Some(12346));
   }
 }
