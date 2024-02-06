@@ -174,6 +174,49 @@ pub fn f64_to_int (value: f64, digits: u32) -> i64 {
   (value * base.pow(digits) as f64).round() as i64
 }
 
+pub struct FloatInfo {
+  pub integer: i64,
+  pub fraction: Option<i64>
+}
+
+/** `get_f64_integer_and_fraction` 获取浮点数的小数和整数部分并返回
+ 
+ # Examples
+  ```
+  use currency_tool_rs::{get_f64_integer_and_fraction, FloatInfo};
+
+  let result = get_f64_integer_and_fraction(12.12, 2);
+
+  assert_eq!(result.integer, 12);
+  assert_eq!(result.fraction, Some(12));
+  ```
+ */
+pub fn get_f64_integer_and_fraction (value: f64, precision: usize) -> FloatInfo {
+  if precision == 0 {
+    return FloatInfo{
+      integer: value.round() as i64,
+      fraction: None
+    }
+  }
+
+  let eps = 1e-4;
+  let res: f64 = format!("{:.*}", precision, value).parse().unwrap();
+  let mut f = res.abs().fract();
+
+  while (f.round() - f).abs() <= eps {
+    f = 10.0 * f;
+  }
+
+  while (f.round() - f).abs() > eps {
+    f = 10.0 * f;    
+  }
+
+  FloatInfo{
+    integer: value.round() as i64,
+    fraction: Some(f.round() as i64)
+  }
+}
+
 #[cfg(test)]
 mod unit_test {
   use super::*;
@@ -287,5 +330,33 @@ mod unit_test {
   #[test]
   fn multi_decimals_f64_to_int() {
     assert_eq!(f64_to_int(12.123, 3), 12123);
+  }
+
+  #[test]
+  fn basic_get_f64_integer_and_fraction() {
+    let result = get_f64_integer_and_fraction(12.12, 2);
+
+    assert_eq!(result.integer, 12);
+    assert_eq!(result.fraction, Some(12));
+  }
+
+  #[test]
+  fn more_decimals_get_f64_integer_and_fraction() {
+    let result = get_f64_integer_and_fraction(12.123, 2);
+    let result2 = get_f64_integer_and_fraction(12.123, 3);
+    let result3 = get_f64_integer_and_fraction(12.12345678, 5);
+
+    assert_eq!(result.integer, 12);
+    assert_eq!(result.fraction, Some(12));
+    assert_eq!(result2.integer, 12);
+    assert_eq!(result3.fraction, Some(12346));
+  }
+
+  #[test]
+  fn no_precision_get_f64_integer_and_fraction() {
+    let result = get_f64_integer_and_fraction(12.123, 0);
+
+    assert_eq!(result.integer, 12);
+    assert_eq!(result.fraction, None);
   }
 }
