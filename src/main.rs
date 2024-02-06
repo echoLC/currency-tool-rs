@@ -23,4 +23,14 @@ fn main() {
 
         println!("result is {}", result);
     }
+
+    let mut s = String::new();
+
+    let update_string = |str| s.push_str(str);
+
+    exec(update_string);
+
+    fn exec<'a, F: FnMut(&'a str)>(mut f: F) {
+        f("hello")
+    }
 }
