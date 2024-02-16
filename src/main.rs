@@ -27,4 +27,13 @@ fn main() {
     let s1: Box<str> = String::from("hello world").into();
 
     println!("{:?}", s1);
+    let mut s = String::new();
+
+    let update_string = |str| s.push_str(str);
+
+    exec(update_string);
+
+    fn exec<'a, F: FnMut(&'a str)>(mut f: F) {
+        f("hello")
+    }
 }
