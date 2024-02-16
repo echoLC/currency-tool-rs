@@ -1,5 +1,6 @@
 use currency_tool_rs::{get_default_currency, get_default_rate};
 use std::fmt::Display;
+use std::convert::TryFrom;
 
 fn main() {
     println!("default currency:{}", get_default_currency());
@@ -36,4 +37,36 @@ fn main() {
     fn exec<'a, F: FnMut(&'a str)>(mut f: F) {
         f("hello")
     }
+
+    enum_to_int_example(MyEnum::C as i32);
+    enum_to_int_example(4);
+}
+
+enum MyEnum {
+  A = 1,
+  B,
+  C
+}
+
+impl TryFrom<i32> for MyEnum {
+  type Error = ();
+
+  fn try_from(value: i32) -> Result<Self, Self::Error> {
+    match value {
+      x if x == MyEnum::A as i32 => Ok(MyEnum::A),      
+      x if x == MyEnum::B as i32 => Ok(MyEnum::B),      
+      x if x == MyEnum::C as i32 => Ok(MyEnum::C),
+      _ => Err(())      
+    }
+  }  
+}
+
+
+fn enum_to_int_example(v: i32) {
+  match v.try_into() {
+    Ok(MyEnum::A) => println!("got A"),    
+    Ok(MyEnum::B) => println!("got B"),    
+    Ok(MyEnum::C) => println!("got C"),
+    Err(_) => eprintln!("unknown number")    
+  }      
 }
