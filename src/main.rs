@@ -23,4 +23,8 @@ fn main() {
 
         println!("result is {}", result);
     }
+
+    let s1: Box<str> = String::from("hello world").into();
+
+    println!("{:?}", s1);
 }
