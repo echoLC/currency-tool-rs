@@ -40,6 +40,9 @@ fn main() {
 
     enum_to_int_example(MyEnum::C as i32);
     enum_to_int_example(4);
+
+    let str1 = generate_str();
+    println!("{}", str1);
 }
 
 enum MyEnum {
@@ -69,4 +72,11 @@ fn enum_to_int_example(v: i32) {
     Ok(MyEnum::C) => println!("got C"),
     Err(_) => eprintln!("unknown number")    
   }      
+}
+
+fn generate_str () -> &'static str {
+  let mut s = String::new();
+  s.push_str("hello, world");
+
+  Box::leak(s.into_boxed_str())
 }
