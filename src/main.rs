@@ -1,36 +1,12 @@
-use currency_tool_rs::{get_default_currency, get_default_rate};
-use std::fmt::Display;
+pub fn is_armstrong_number(num: u32) -> bool {
+    let num_str = num.to_string();
+    let power_digit = num_str.len();
+    let sum = num_str.chars().map(|c| c.to_digit(10).unwrap().pow(power_digit as u32) as u64).sum::<u64>();
+
+
+    sum == num as u64
+}
 
 fn main() {
-    println!("default currency:{}", get_default_currency());
-    println!("default currency rate:{}", get_default_rate());
-    
-    fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str where T: Display {
-        println!("Announcement! {}", ann);
-
-        if x.len() > y.len() {
-            x
-        } else {
-            y
-        }
-    }
-
-    let string1 = String::from("hello");
-
-    {
-        let string2 = String::from("world");
-        let result = longest_with_an_announcement(&string1, &string2, String::from("hello"));
-
-        println!("result is {}", result);
-    }
-
-    let mut s = String::new();
-
-    let update_string = |str| s.push_str(str);
-
-    exec(update_string);
-
-    fn exec<'a, F: FnMut(&'a str)>(mut f: F) {
-        f("hello")
-    }
+    println!("{}", is_armstrong_number(3_999_999_999));
 }
