@@ -1,51 +1,88 @@
-pub fn get_bottle_text(n: u32) -> String {
-    if n > 1 {
-        String::from("bottles")
+pub fn square(s: u32) -> u64 {
+    if s < 1 || s > 64 {
+        panic!("Square must be between 1 and 64");
+    } 
+
+    if s == 1 {
+        1
     } else {
-        String::from("bottle")
+        square(s - 1) * 2
     }
 }
 
-pub fn verse(n: u32) -> String {
-    let no_bottles_text = "Go to the store and buy some more, 99 bottles of beer on the wall.\n";
-    if n == 0 {
-        String::from("No more bottles of beer on the wall, no more bottles of beer.\n") + no_bottles_text
-    } else if n == 1 {
-        String::from("1 bottle of beer on the wall, 1 bottle of beer.") + "\n" + "Take it down and pass it around, no more bottles of beer on the wall.\n"
-    } else {
-        n.to_string() + " " + &get_bottle_text(n) + " of beer on the wall, " + &n.to_string() + " " + &get_bottle_text(n) + " of beer." + "\n" + "Take one down and pass it around, " + &(n - 1).to_string() + " " + &get_bottle_text(n - 1) + " of beer on the wall.\n"
-    }
-}
+pub fn total() -> u64 {
+    let mut sum = 0;
 
-pub fn sing(start: u32, end: u32) -> String {
-    let mut res = String::new();
-    let mut new_start = start;
-    let new_end = if end != 0 {
-        end - 1
-    } else {
-        end
-    };
-
-    while new_start > new_end  {
-        res += &verse(new_start);
-        if new_start != end {
-            res += "\n";
-        }
-        new_start -= 1;
+    for i in 1..65 {
+        sum += square(i)
     }
 
-    if new_start == 0 {
-        res += &verse(0);
-    }
-    res
+    sum
 }
 
 fn main() {
-    assert_eq!(verse(0), "No more bottles of beer on the wall, no more bottles of beer.\nGo to the store and buy some more, 99 bottles of beer on the wall.\n");
-    assert_eq!(verse(1), "1 bottle of beer on the wall, 1 bottle of beer.\nTake it down and pass it around, no more bottles of beer on the wall.\n");
-    assert_eq!(verse(2), "2 bottles of beer on the wall, 2 bottles of beer.\nTake one down and pass it around, 1 bottle of beer on the wall.\n");
-    assert_eq!(verse(8), "8 bottles of beer on the wall, 8 bottles of beer.\nTake one down and pass it around, 7 bottles of beer on the wall.\n");
-
-    assert_eq!(sing(8, 6), "8 bottles of beer on the wall, 8 bottles of beer.\nTake one down and pass it around, 7 bottles of beer on the wall.\n\n7 bottles of beer on the wall, 7 bottles of beer.\nTake one down and pass it around, 6 bottles of beer on the wall.\n\n6 bottles of beer on the wall, 6 bottles of beer.\nTake one down and pass it around, 5 bottles of beer on the wall.\n");
-    assert_eq!(sing(3, 0), "3 bottles of beer on the wall, 3 bottles of beer.\nTake one down and pass it around, 2 bottles of beer on the wall.\n\n2 bottles of beer on the wall, 2 bottles of beer.\nTake one down and pass it around, 1 bottle of beer on the wall.\n\n1 bottle of beer on the wall, 1 bottle of beer.\nTake it down and pass it around, no more bottles of beer on the wall.\n\nNo more bottles of beer on the wall, no more bottles of beer.\nGo to the store and buy some more, 99 bottles of beer on the wall.\n");
+   
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    pub fn process_square_case(input: u32, expected: u64) {
+        assert_eq!(square(input), expected);
+    }
+
+        #[test]
+    fn one() {
+        process_square_case(1, 1);
+    }
+    #[test]
+    #[ignore]
+    fn two() {
+        process_square_case(2, 2);
+    }
+    #[test]
+    #[ignore]
+    fn three() {
+        process_square_case(3, 4);
+    }
+    #[test]
+    #[ignore]
+    fn four() {
+        process_square_case(4, 8);
+    }
+    #[test]
+    #[ignore]
+    fn sixteen() {
+        process_square_case(16, 32_768);
+    }
+    #[test]
+    #[ignore]
+    fn thirty_two() {
+        process_square_case(32, 2_147_483_648);
+    }
+    #[test]
+    #[ignore]
+    fn sixty_four() {
+        process_square_case(64, 9_223_372_036_854_775_808);
+    }
+    #[test]
+    #[ignore]
+    #[should_panic(expected = "Square must be between 1 and 64")]
+    fn square_0_raises_an_exception() {
+        square(0);
+    }
+    #[test]
+    #[ignore]
+    #[should_panic(expected = "Square must be between 1 and 64")]
+    fn square_greater_than_64_raises_an_exception() {
+        square(65);
+    }
+    #[test]
+    #[ignore]
+    fn returns_the_total_number_of_grains_on_the_board() {
+        assert_eq!(total(), 18_446_744_073_709_551_615);
+    }
+}
+
