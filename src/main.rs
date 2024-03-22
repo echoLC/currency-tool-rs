@@ -1,17 +1,42 @@
-pub fn is_leap_year(year: u64) -> bool {
-    if year % 400 == 0 {
-        return true;
+fn is_prime (num: u32) -> bool {
+    if num <= 1 {
+        return false;
     }
 
-    if year % 100 != 0 && year % 4 == 0 {
-        return true;
+    let mut i = 2;
+
+    while i <= (num as f64).sqrt() as u32 {
+        if num % i == 0 {
+            return false;
+        }
+
+        i += 1;
     }
 
-    false
+    true
+}
+
+pub fn nth(n: u32) -> u32 {
+    let mut index = 0;
+    let mut num = 2;
+
+    while index <= n {
+        if index == n {
+            return num;
+        } else {
+            num += 1;
+        }
+
+        if is_prime(num) {
+            index += 1;
+        }
+    }
+
+    num
 }
 
 fn main() {
-   
+   nth(1);
 }
 
 #[cfg(test)]
@@ -20,41 +45,21 @@ mod tests {
     use super::*;
 
     #[test]
-fn year_not_divisible_by_4_in_common_year() {
-    assert!(!is_leap_year(2015));
-}
-#[test]
-fn year_divisible_by_2_not_divisible_by_4_in_common_year() {
-    assert!(!is_leap_year(1970));
-}
-#[test]
-fn year_divisible_by_4_not_divisible_by_100_in_leap_year() {
-    assert!(is_leap_year(1996));
-}
-#[test]
-fn year_divisible_by_4_and_5_is_still_a_leap_year() {
-    assert!(is_leap_year(1960));
-}
-#[test]
-fn year_divisible_by_100_not_divisible_by_400_in_common_year() {
-    assert!(!is_leap_year(2100));
-}
-#[test]
-fn year_divisible_by_100_but_not_by_3_is_still_not_a_leap_year() {
-    assert!(!is_leap_year(1900));
-}
-#[test]
-fn year_divisible_by_400_is_leap_year() {
-    assert!(is_leap_year(2000));
-}
-#[test]
-fn year_divisible_by_400_but_not_by_125_is_still_a_leap_year() {
-    assert!(is_leap_year(2400));
-}
-#[test]
-fn year_divisible_by_200_not_divisible_by_400_in_common_year() {
-    assert!(!is_leap_year(1800));
-}
+    fn first_prime() {
+        assert_eq!(nth(0), 2);
+    }
+    #[test]
+    fn second_prime() {
+        assert_eq!(nth(1), 3);
+    }
+    #[test]
+    fn sixth_prime() {
+        assert_eq!(nth(5), 13);
+    }
+    #[test]
+    fn big_prime() {
+        assert_eq!(nth(10_000), 104_743);
+    }
 
 }
 
