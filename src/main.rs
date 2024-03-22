@@ -1,23 +1,13 @@
-pub fn square(s: u32) -> u64 {
-    if s < 1 || s > 64 {
-        panic!("Square must be between 1 and 64");
-    } 
-
-    if s == 1 {
-        1
-    } else {
-        square(s - 1) * 2
-    }
-}
-
-pub fn total() -> u64 {
-    let mut sum = 0;
-
-    for i in 1..65 {
-        sum += square(i)
+pub fn is_leap_year(year: u64) -> bool {
+    if year % 400 == 0 {
+        return true;
     }
 
-    sum
+    if year % 100 != 0 && year % 4 == 0 {
+        return true;
+    }
+
+    false
 }
 
 fn main() {
@@ -29,60 +19,42 @@ mod tests {
 
     use super::*;
 
-    pub fn process_square_case(input: u32, expected: u64) {
-        assert_eq!(square(input), expected);
-    }
+    #[test]
+fn year_not_divisible_by_4_in_common_year() {
+    assert!(!is_leap_year(2015));
+}
+#[test]
+fn year_divisible_by_2_not_divisible_by_4_in_common_year() {
+    assert!(!is_leap_year(1970));
+}
+#[test]
+fn year_divisible_by_4_not_divisible_by_100_in_leap_year() {
+    assert!(is_leap_year(1996));
+}
+#[test]
+fn year_divisible_by_4_and_5_is_still_a_leap_year() {
+    assert!(is_leap_year(1960));
+}
+#[test]
+fn year_divisible_by_100_not_divisible_by_400_in_common_year() {
+    assert!(!is_leap_year(2100));
+}
+#[test]
+fn year_divisible_by_100_but_not_by_3_is_still_not_a_leap_year() {
+    assert!(!is_leap_year(1900));
+}
+#[test]
+fn year_divisible_by_400_is_leap_year() {
+    assert!(is_leap_year(2000));
+}
+#[test]
+fn year_divisible_by_400_but_not_by_125_is_still_a_leap_year() {
+    assert!(is_leap_year(2400));
+}
+#[test]
+fn year_divisible_by_200_not_divisible_by_400_in_common_year() {
+    assert!(!is_leap_year(1800));
+}
 
-        #[test]
-    fn one() {
-        process_square_case(1, 1);
-    }
-    #[test]
-    #[ignore]
-    fn two() {
-        process_square_case(2, 2);
-    }
-    #[test]
-    #[ignore]
-    fn three() {
-        process_square_case(3, 4);
-    }
-    #[test]
-    #[ignore]
-    fn four() {
-        process_square_case(4, 8);
-    }
-    #[test]
-    #[ignore]
-    fn sixteen() {
-        process_square_case(16, 32_768);
-    }
-    #[test]
-    #[ignore]
-    fn thirty_two() {
-        process_square_case(32, 2_147_483_648);
-    }
-    #[test]
-    #[ignore]
-    fn sixty_four() {
-        process_square_case(64, 9_223_372_036_854_775_808);
-    }
-    #[test]
-    #[ignore]
-    #[should_panic(expected = "Square must be between 1 and 64")]
-    fn square_0_raises_an_exception() {
-        square(0);
-    }
-    #[test]
-    #[ignore]
-    #[should_panic(expected = "Square must be between 1 and 64")]
-    fn square_greater_than_64_raises_an_exception() {
-        square(65);
-    }
-    #[test]
-    #[ignore]
-    fn returns_the_total_number_of_grains_on_the_board() {
-        assert_eq!(total(), 18_446_744_073_709_551_615);
-    }
 }
 
