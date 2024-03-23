@@ -1,16 +1,20 @@
-pub fn factors(n: u64) -> Vec<u64> {
-  let mut res: Vec<u64> = Vec::new();
-  let mut divisor: u64 = 2;
-  let mut original_value = n;
+pub fn raindrops(n: u32) -> String {
+  let mut res = String::new();
 
-  while original_value >= 2 {
-    if original_value % divisor == 0 {
-      res.push(divisor);
+  if n % 3 == 0 {
+    res = res + "Pling";
+  }
 
-      original_value = original_value / divisor;
-    } else {
-      divisor += 1;
-    }
+  if n % 5 == 0 {
+    res = res + "Plang";
+  }
+  
+  if n % 7 == 0 {
+    res = res + "Plong";
+  }
+
+  if res.is_empty() {
+    res = n.to_string();
   }
 
   res
@@ -27,77 +31,131 @@ mod tests {
   use super::*;
 
   #[test]
-  fn no_factors() {
-      let factors = factors(1);
-      let expected = [];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn prime_number() {
-      let factors = factors(2);
-      let expected = [2];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn another_prime_number() {
-      let factors = factors(3);
-      let expected = [3];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn square_of_a_prime() {
-      let factors = factors(9);
-      let expected = [3, 3];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn product_of_first_prime() {
-      let factors = factors(4);
-      let expected = [2, 2];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn cube_of_a_prime() {
-      let factors = factors(8);
-      let expected = [2, 2, 2];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn product_of_second_prime() {
-      let factors = factors(27);
-      let expected = [3, 3, 3];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn product_of_third_prime() {
-      let factors = factors(625);
-      let expected = [5, 5, 5, 5];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn product_of_first_and_second_prime() {
-      let factors = factors(6);
-      let expected = [2, 3];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn product_of_primes_and_non_primes() {
-      let factors = factors(12);
-      let expected = [2, 2, 3];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn product_of_primes() {
-      let factors = factors(901255);
-      let expected = [5, 17, 23, 461];
-      assert_eq!(factors, expected);
-  }
-  #[test]
-  fn factors_include_a_large_prime() {
-      let factors = factors(93819012551);
-      let expected = [11, 9539, 894119];
-      assert_eq!(factors, expected);
-  }
+fn test_the_sound_for_1_is_1() {
+    let input = 1;
+    let output = raindrops(input);
+    let expected = "1";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_3_is_pling() {
+    let input = 3;
+    let output = raindrops(input);
+    let expected = "Pling";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_5_is_plang() {
+    let input = 5;
+    let output = raindrops(input);
+    let expected = "Plang";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_7_is_plong() {
+    let input = 7;
+    let output = raindrops(input);
+    let expected = "Plong";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_6_is_pling_as_it_has_a_factor_3() {
+    let input = 6;
+    let output = raindrops(input);
+    let expected = "Pling";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_2_to_the_power_3_does_not_make_a_raindrop_sound_as_3_is_the_exponent_not_the_base() {
+    let input = 8;
+    let output = raindrops(input);
+    let expected = "8";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_9_is_pling_as_it_has_a_factor_3() {
+    let input = 9;
+    let output = raindrops(input);
+    let expected = "Pling";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_10_is_plang_as_it_has_a_factor_5() {
+    let input = 10;
+    let output = raindrops(input);
+    let expected = "Plang";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_14_is_plong_as_it_has_a_factor_of_7() {
+    let input = 14;
+    let output = raindrops(input);
+    let expected = "Plong";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_15_is_plingplang_as_it_has_factors_3_and_5() {
+    let input = 15;
+    let output = raindrops(input);
+    let expected = "PlingPlang";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_21_is_plingplong_as_it_has_factors_3_and_7() {
+    let input = 21;
+    let output = raindrops(input);
+    let expected = "PlingPlong";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_25_is_plang_as_it_has_a_factor_5() {
+    let input = 25;
+    let output = raindrops(input);
+    let expected = "Plang";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_27_is_pling_as_it_has_a_factor_3() {
+    let input = 27;
+    let output = raindrops(input);
+    let expected = "Pling";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_35_is_plangplong_as_it_has_factors_5_and_7() {
+    let input = 35;
+    let output = raindrops(input);
+    let expected = "PlangPlong";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_49_is_plong_as_it_has_a_factor_7() {
+    let input = 49;
+    let output = raindrops(input);
+    let expected = "Plong";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_52_is_52() {
+    let input = 52;
+    let output = raindrops(input);
+    let expected = "52";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_105_is_plingplangplong_as_it_has_factors_3_5_and_7() {
+    let input = 105;
+    let output = raindrops(input);
+    let expected = "PlingPlangPlong";
+    assert_eq!(output, expected);
+}
+#[test]
+fn test_the_sound_for_3125_is_plang_as_it_has_a_factor_5() {
+    let input = 3125;
+    let output = raindrops(input);
+    let expected = "Plang";
+    assert_eq!(output, expected);
+}
 
 }
 
