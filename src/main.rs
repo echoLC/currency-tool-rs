@@ -1,28 +1,31 @@
-pub fn raindrops(n: u32) -> String {
-  let mut res = String::new();
+pub fn build_proverb(list: &[&str]) -> String {
+  let mut res: Vec<String> = Vec::new();
 
-  if n % 3 == 0 {
-    res = res + "Pling";
+  for i in 0..list.len() {
+    // 最后一项
+    if i == list.len() - 1 {
+      let proverb_line = String::new() + "And all for the want of a " + list.first().unwrap() + ".";
+
+      res.push(proverb_line);
+
+      break;
+    }
+
+    if !list[ i + 1].is_empty() {
+      let proverb_line = String::new() + "For want of a " + list[i] + " the " + list[ i + 1] +  " was lost.";
+
+      res.push(proverb_line);
+    }
   }
 
-  if n % 5 == 0 {
-    res = res + "Plang";
-  }
-  
-  if n % 7 == 0 {
-    res = res + "Plong";
-  }
-
-  if res.is_empty() {
-    res = n.to_string();
-  }
-
-  res
+  res.join("\n")
 }
 
 
 fn main() {
-
+  let input = &["nail", "shoe"];
+  let output = build_proverb(input);
+  println!("{}", output);
 }
 
 #[cfg(test)]
@@ -31,131 +34,74 @@ mod tests {
   use super::*;
 
   #[test]
-fn test_the_sound_for_1_is_1() {
-    let input = 1;
-    let output = raindrops(input);
-    let expected = "1";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_3_is_pling() {
-    let input = 3;
-    let output = raindrops(input);
-    let expected = "Pling";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_5_is_plang() {
-    let input = 5;
-    let output = raindrops(input);
-    let expected = "Plang";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_7_is_plong() {
-    let input = 7;
-    let output = raindrops(input);
-    let expected = "Plong";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_6_is_pling_as_it_has_a_factor_3() {
-    let input = 6;
-    let output = raindrops(input);
-    let expected = "Pling";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_2_to_the_power_3_does_not_make_a_raindrop_sound_as_3_is_the_exponent_not_the_base() {
-    let input = 8;
-    let output = raindrops(input);
-    let expected = "8";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_9_is_pling_as_it_has_a_factor_3() {
-    let input = 9;
-    let output = raindrops(input);
-    let expected = "Pling";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_10_is_plang_as_it_has_a_factor_5() {
-    let input = 10;
-    let output = raindrops(input);
-    let expected = "Plang";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_14_is_plong_as_it_has_a_factor_of_7() {
-    let input = 14;
-    let output = raindrops(input);
-    let expected = "Plong";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_15_is_plingplang_as_it_has_factors_3_and_5() {
-    let input = 15;
-    let output = raindrops(input);
-    let expected = "PlingPlang";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_21_is_plingplong_as_it_has_factors_3_and_7() {
-    let input = 21;
-    let output = raindrops(input);
-    let expected = "PlingPlong";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_25_is_plang_as_it_has_a_factor_5() {
-    let input = 25;
-    let output = raindrops(input);
-    let expected = "Plang";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_27_is_pling_as_it_has_a_factor_3() {
-    let input = 27;
-    let output = raindrops(input);
-    let expected = "Pling";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_35_is_plangplong_as_it_has_factors_5_and_7() {
-    let input = 35;
-    let output = raindrops(input);
-    let expected = "PlangPlong";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_49_is_plong_as_it_has_a_factor_7() {
-    let input = 49;
-    let output = raindrops(input);
-    let expected = "Plong";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_52_is_52() {
-    let input = 52;
-    let output = raindrops(input);
-    let expected = "52";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_105_is_plingplangplong_as_it_has_factors_3_5_and_7() {
-    let input = 105;
-    let output = raindrops(input);
-    let expected = "PlingPlangPlong";
-    assert_eq!(output, expected);
-}
-#[test]
-fn test_the_sound_for_3125_is_plang_as_it_has_a_factor_5() {
-    let input = 3125;
-    let output = raindrops(input);
-    let expected = "Plang";
-    assert_eq!(output, expected);
-}
+  fn zero_pieces() {
+      let input = &[];
+      let output = build_proverb(input);
+      let expected = String::new();
+      assert_eq!(output, expected);
+  }
+  #[test]
+  fn one_piece() {
+      let input = &["nail"];
+      let output = build_proverb(input);
+      let expected: String = ["And all for the want of a nail."].join("\n");
+      assert_eq!(output, expected);
+  }
+  #[test]
+  fn two_pieces() {
+      let input = &["nail", "shoe"];
+      let output = build_proverb(input);
+      let expected: String = [
+          "For want of a nail the shoe was lost.",
+          "And all for the want of a nail.",
+      ]
+      .join("\n");
+      assert_eq!(output, expected);
+  }
+  #[test]
+  fn three_pieces() {
+      let input = &["nail", "shoe", "horse"];
+      let output = build_proverb(input);
+      let expected: String = [
+          "For want of a nail the shoe was lost.",
+          "For want of a shoe the horse was lost.",
+          "And all for the want of a nail.",
+      ]
+      .join("\n");
+      assert_eq!(output, expected);
+  }
+  #[test]
+  fn full_proverb() {
+      let input = &[
+          "nail", "shoe", "horse", "rider", "message", "battle", "kingdom",
+      ];
+      let output = build_proverb(input);
+      let expected: String = [
+          "For want of a nail the shoe was lost.",
+          "For want of a shoe the horse was lost.",
+          "For want of a horse the rider was lost.",
+          "For want of a rider the message was lost.",
+          "For want of a message the battle was lost.",
+          "For want of a battle the kingdom was lost.",
+          "And all for the want of a nail.",
+      ]
+      .join("\n");
+      assert_eq!(output, expected);
+  }
+  #[test]
+  fn four_pieces_modernized() {
+      let input = &["pin", "gun", "soldier", "battle"];
+      let output = build_proverb(input);
+      let expected: String = [
+          "For want of a pin the gun was lost.",
+          "For want of a gun the soldier was lost.",
+          "For want of a soldier the battle was lost.",
+          "And all for the want of a pin.",
+      ]
+      .join("\n");
+      assert_eq!(output, expected);
+  }
+  
 
 }
 
