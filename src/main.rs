@@ -5,23 +5,31 @@ pub fn reply(message: &str) -> &str {
     return "Fine. Be that way!";
   }
 
+  // no letters
+  fn is_no_letters(message: &str) -> bool {
+    message.chars().filter(|c| c.is_alphabetic()).count() == 0 
+  }
+
+  fn is_all_uppercase_char(message: &str) -> bool {
+    message.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase())
+  }
+
   if trim_message.ends_with("?")  {
-    // no letters
-    if trim_message.chars().filter(|c| c.is_alphabetic()).count() == 0 {
+    if is_no_letters(trim_message) {
       return "Sure.";
     }
-    if trim_message.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase()) {
+    if is_all_uppercase_char(trim_message) {
       return "Calm down, I know what I'm doing!"; 
     } else {
       return "Sure.";
     }
   }
 
-  if trim_message.chars().filter(|c| c.is_alphabetic()).count() == 0 {
+  if is_no_letters(trim_message) {
     return "Whatever.";
   }
 
-  if trim_message.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase()) {
+  if is_all_uppercase_char(trim_message) {
     return "Whoa, chill out!";
   }
 
