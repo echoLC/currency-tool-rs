@@ -1,41 +1,40 @@
-pub fn sum_of_multiples(limit: u32, factors: &[u32]) -> u32 {
-  let mut res: Vec<u32> = Vec::new();
+pub fn reply(message: &str) -> &str {
+  let trim_message = message.trim();
 
-  if limit < 3 {
-    return 0;
+  if trim_message.is_empty() {
+    return "Fine. Be that way!";
   }
 
-  if factors.len() == 0 {
-    return 0;
+  if trim_message.ends_with("?")  {
+    // no letters
+    if trim_message.chars().filter(|c| c.is_alphabetic()).count() == 0 {
+      return "Sure.";
+    }
+    if trim_message.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase()) {
+      return "Calm down, I know what I'm doing!"; 
+    } else {
+      return "Sure.";
+    }
   }
 
-  let mut is_repeated: bool = false;
-  let start = *factors.first().unwrap();
-
-  for i in start..limit {
-    for factor in factors {
-      if *factor == 0 {
-        continue;
-      }
-      if i % factor == 0 && !is_repeated {
-        res.push(i);
-  
-        is_repeated = true;
-      }
-    }  
-
-    is_repeated = false;
+  if trim_message.chars().filter(|c| c.is_alphabetic()).count() == 0 {
+    return "Whatever.";
   }
 
-  res.iter().sum()
+  if trim_message.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase()) {
+    return "Whoa, chill out!";
+  }
+
+  "Whatever."
 }
 
 
 fn main() {
-  let factors = &[3];
-  let limit = 7;
-  let output = sum_of_multiples(limit, factors);
-  println!("{}", output);
+  let input = "Tom-ay-to, tom-aaaah-to.";
+  let output = reply(input);
+
+  println!("{:?}", "WHAT'S GOING ON?".chars().filter(|c| c.is_alphabetic()).collect::<Vec<char>>());
+  println!("{:?}", "1, 2, 3".chars().filter(|c| c.is_alphabetic()).collect::<Vec<char>>());
 }
 
 #[cfg(test)]
@@ -43,134 +42,148 @@ mod tests {
 
   use super::*;
 
-  #[test]
-fn no_multiples_within_limit() {
-    let factors = &[3, 5];
-    let limit = 1;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 0;
-    assert_eq!(output, expected);
+  fn process_response_case(phrase: &str, expected_response: &str) {
+    assert_eq!(reply(phrase), expected_response);
 }
 #[test]
-fn one_factor_has_multiples_within_limit() {
-    let factors = &[3, 5];
-    let limit = 4;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 3;
-    assert_eq!(output, expected);
+/// stating something
+fn stating_something() {
+    process_response_case("Tom-ay-to, tom-aaaah-to.", "Whatever.");
 }
 #[test]
-fn more_than_one_multiple_within_limit() {
-    let factors = &[3];
-    let limit = 7;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 9;
-    assert_eq!(output, expected);
+/// ending with whitespace
+fn ending_with_whitespace() {
+    process_response_case("Okay if like my  spacebar  quite a bit?   ", "Sure.");
 }
 #[test]
-fn more_than_one_factor_with_multiples_within_limit() {
-    let factors = &[3, 5];
-    let limit = 10;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 23;
-    assert_eq!(output, expected);
+/// shouting numbers
+fn shouting_numbers() {
+    process_response_case("1, 2, 3 GO!", "Whoa, chill out!");
 }
 #[test]
-fn each_multiple_is_only_counted_once() {
-    let factors = &[3, 5];
-    let limit = 100;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 2318;
-    assert_eq!(output, expected);
+/// other whitespace
+fn other_whitespace() {
+    process_response_case("\r\r 	", "Fine. Be that way!");
 }
 #[test]
-fn a_much_larger_limit() {
-    let factors = &[3, 5];
-    let limit = 1000;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 233168;
-    assert_eq!(output, expected);
+/// shouting with special characters
+fn shouting_with_special_characters() {
+    process_response_case(
+        "ZOMG THE %^*@#$(*^ ZOMBIES ARE COMING!!11!!1!",
+        "Whoa, chill out!",
+    );
 }
 #[test]
-fn three_factors() {
-    let factors = &[7, 13, 17];
-    let limit = 20;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 51;
-    assert_eq!(output, expected);
+/// talking forcefully
+fn talking_forcefully() {
+    process_response_case("Hi there!", "Whatever.");
 }
 #[test]
-fn factors_not_relatively_prime() {
-    let factors = &[4, 6];
-    let limit = 15;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 30;
-    assert_eq!(output, expected);
+/// prattling on
+fn prattling_on() {
+    process_response_case("Wait! Hang on. Are you going to be OK?", "Sure.");
 }
 #[test]
-fn some_pairs_of_factors_relatively_prime_and_some_not() {
-    let factors = &[5, 6, 8];
-    let limit = 150;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 4419;
-    assert_eq!(output, expected);
+/// forceful question
+fn forceful_question() {
+    process_response_case("WHAT'S GOING ON?", "Calm down, I know what I'm doing!");
 }
 #[test]
-fn one_factor_is_a_multiple_of_another() {
-    let factors = &[5, 25];
-    let limit = 51;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 275;
-    assert_eq!(output, expected);
+/// shouting with no exclamation mark
+fn shouting_with_no_exclamation_mark() {
+    process_response_case("I HATE THE DENTIST", "Whoa, chill out!");
 }
 #[test]
-fn much_larger_factors() {
-    let factors = &[43, 47];
-    let limit = 10000;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 2203160;
-    assert_eq!(output, expected);
+/// asking gibberish
+fn asking_gibberish() {
+    process_response_case("fffbbcbeab?", "Sure.");
 }
 #[test]
-fn all_numbers_are_multiples_of_1() {
-    let factors = &[1];
-    let limit = 100;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 4950;
-    assert_eq!(output, expected);
+/// question with no letters
+fn question_with_no_letters() {
+    process_response_case("4?", "Sure.");
 }
 #[test]
-fn no_factors_means_an_empty_sum() {
-    let factors = &[];
-    let limit = 10000;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 0;
-    assert_eq!(output, expected);
+/// no letters
+fn no_letters() {
+    process_response_case("1, 2, 3", "Whatever.");
 }
 #[test]
-fn the_only_multiple_of_0_is_0() {
-    let factors = &[0];
-    let limit = 1;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 0;
-    assert_eq!(output, expected);
+/// statement containing question mark
+fn statement_containing_question_mark() {
+    process_response_case("Ending with ? means a question.", "Whatever.");
+}
+//NEW
+#[test]
+/// multiple line question
+fn multiple_line_question() {
+    process_response_case(
+        "\rDoes this cryogenic chamber make me look fat?\rNo.",
+        "Whatever.",
+    );
 }
 #[test]
-fn the_factor_0_does_not_affect_the_sum_of_multiples_of_other_factors() {
-    let factors = &[3, 0];
-    let limit = 4;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 3;
-    assert_eq!(output, expected);
+/// non-question ending with whitespace
+fn nonquestion_ending_with_whitespace() {
+    process_response_case(
+        "This is a statement ending with whitespace      ",
+        "Whatever.",
+    );
 }
 #[test]
-fn solutions_using_include_exclude_must_extend_to_cardinality_greater_than_3() {
-    let factors = &[2, 3, 5, 7, 11];
-    let limit = 10000;
-    let output = sum_of_multiples(limit, factors);
-    let expected = 39614537;
-    assert_eq!(output, expected);
+/// shouting
+fn shouting() {
+    process_response_case("WATCH OUT!", "Whoa, chill out!");
 }
+#[test]
+/// non-letters with question
+fn nonletters_with_question() {
+    process_response_case(":) ?", "Sure.");
+}
+#[test]
+/// shouting gibberish
+fn shouting_gibberish() {
+    process_response_case("FCECDFCAAB", "Whoa, chill out!");
+}
+#[test]
+/// asking a question
+fn asking_a_question() {
+    process_response_case("Does this cryogenic chamber make me look fat?", "Sure.");
+}
+#[test]
+/// asking a numeric question
+fn asking_a_numeric_question() {
+    process_response_case("You are, what, like 15?", "Sure.");
+}
+#[test]
+/// silence
+fn silence() {
+    process_response_case("", "Fine. Be that way!");
+}
+#[test]
+/// starting with whitespace
+fn starting_with_whitespace() {
+    process_response_case("         hmmmmmmm...", "Whatever.");
+}
+#[test]
+/// using acronyms in regular speech
+fn using_acronyms_in_regular_speech() {
+    process_response_case(
+        "It's OK if you don't want to go work for NASA.",
+        "Whatever.",
+    );
+}
+#[test]
+/// alternate silence
+fn alternate_silence() {
+    process_response_case("										", "Fine. Be that way!");
+}
+#[test]
+/// prolonged silence
+fn prolonged_silence() {
+    process_response_case("          ", "Fine. Be that way!");
+}
+
 
   
 
