@@ -1,48 +1,45 @@
-pub fn reply(message: &str) -> &str {
-  let trim_message = message.trim();
+#[derive(Debug)]
+pub struct HighScores {
+    scores: Vec<u32>
+}
 
-  if trim_message.is_empty() {
-    return "Fine. Be that way!";
-  }
-
-  // no letters
-  fn is_no_letters(message: &str) -> bool {
-    message.chars().filter(|c| c.is_alphabetic()).count() == 0 
-  }
-
-  fn is_all_uppercase_char(message: &str) -> bool {
-    message.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase())
-  }
-
-  if trim_message.ends_with("?")  {
-    if is_no_letters(trim_message) {
-      return "Sure.";
+impl HighScores {
+    pub fn new(scores: &[u32]) -> Self {
+        HighScores{
+            scores: scores.to_vec()
+        }
     }
-    if is_all_uppercase_char(trim_message) {
-      return "Calm down, I know what I'm doing!"; 
-    } else {
-      return "Sure.";
+
+    pub fn scores(&self) -> &[u32] {
+        &self.scores
     }
-  }
 
-  if is_no_letters(trim_message) {
-    return "Whatever.";
-  }
+    pub fn latest(&self) -> Option<u32> {
+        self.scores().last().copied()
+    }
 
-  if is_all_uppercase_char(trim_message) {
-    return "Whoa, chill out!";
-  }
+    pub fn personal_best(&self) -> Option<u32> {
+        let scores = *(&self.scores());
 
-  "Whatever."
+        scores.iter().max().copied()
+    }
+
+    pub fn personal_top_three(&self) -> Vec<u32> {
+        let mut scores = self.scores.to_vec();
+
+        scores.sort_by(|a, b| a.cmp(b).reverse());
+        scores.truncate(3);
+
+        scores
+    }
 }
 
 
 fn main() {
-  let input = "Tom-ay-to, tom-aaaah-to.";
-  let output = reply(input);
+    let expected = [30, 70];
+    let high_scores = HighScores::new(&expected);
 
-  println!("{:?}", "WHAT'S GOING ON?".chars().filter(|c| c.is_alphabetic()).collect::<Vec<char>>());
-  println!("{:?}", "1, 2, 3".chars().filter(|c| c.is_alphabetic()).collect::<Vec<char>>());
+    println!("{:?}", high_scores.personal_top_three());
 }
 
 #[cfg(test)]
@@ -50,150 +47,62 @@ mod tests {
 
   use super::*;
 
-  fn process_response_case(phrase: &str, expected_response: &str) {
-    assert_eq!(reply(phrase), expected_response);
+#[test]
+fn list_of_scores() {
+    let expected = [30, 50, 20, 70];
+    let high_scores = HighScores::new(&expected);
+    assert_eq!(high_scores.scores(), &expected);
 }
 #[test]
-/// stating something
-fn stating_something() {
-    process_response_case("Tom-ay-to, tom-aaaah-to.", "Whatever.");
+fn latest_score() {
+    let high_scores = HighScores::new(&[100, 0, 90, 30]);
+    assert_eq!(high_scores.latest(), Some(30));
 }
 #[test]
-/// ending with whitespace
-fn ending_with_whitespace() {
-    process_response_case("Okay if like my  spacebar  quite a bit?   ", "Sure.");
+fn latest_score_empty() {
+    let high_scores = HighScores::new(&[]);
+    assert_eq!(high_scores.latest(), None);
 }
 #[test]
-/// shouting numbers
-fn shouting_numbers() {
-    process_response_case("1, 2, 3 GO!", "Whoa, chill out!");
+fn personal_best() {
+    let high_scores = HighScores::new(&[40, 100, 70]);
+    assert_eq!(high_scores.personal_best(), Some(100));
 }
 #[test]
-/// other whitespace
-fn other_whitespace() {
-    process_response_case("\r\r 	", "Fine. Be that way!");
+fn personal_best_empty() {
+    let high_scores = HighScores::new(&[]);
+    assert_eq!(high_scores.personal_best(), None);
 }
 #[test]
-/// shouting with special characters
-fn shouting_with_special_characters() {
-    process_response_case(
-        "ZOMG THE %^*@#$(*^ ZOMBIES ARE COMING!!11!!1!",
-        "Whoa, chill out!",
-    );
+fn personal_top_three() {
+    let high_scores = HighScores::new(&[10, 30, 90, 30, 100, 20, 10, 0, 30, 40, 40, 70, 70]);
+    assert_eq!(high_scores.personal_top_three(), vec![100, 90, 70]);
 }
 #[test]
-/// talking forcefully
-fn talking_forcefully() {
-    process_response_case("Hi there!", "Whatever.");
+fn personal_top_three_highest_to_lowest() {
+    let high_scores = HighScores::new(&[20, 10, 30]);
+    assert_eq!(high_scores.personal_top_three(), vec![30, 20, 10]);
 }
 #[test]
-/// prattling on
-fn prattling_on() {
-    process_response_case("Wait! Hang on. Are you going to be OK?", "Sure.");
+fn personal_top_three_with_tie() {
+    let high_scores = HighScores::new(&[40, 20, 40, 30]);
+    assert_eq!(high_scores.personal_top_three(), vec![40, 40, 30]);
 }
 #[test]
-/// forceful question
-fn forceful_question() {
-    process_response_case("WHAT'S GOING ON?", "Calm down, I know what I'm doing!");
+fn personal_top_three_with_less_than_three_scores() {
+    let high_scores = HighScores::new(&[30, 70]);
+    assert_eq!(high_scores.personal_top_three(), vec![70, 30]);
 }
 #[test]
-/// shouting with no exclamation mark
-fn shouting_with_no_exclamation_mark() {
-    process_response_case("I HATE THE DENTIST", "Whoa, chill out!");
+fn personal_top_three_only_one_score() {
+    let high_scores = HighScores::new(&[40]);
+    assert_eq!(high_scores.personal_top_three(), vec![40]);
 }
 #[test]
-/// asking gibberish
-fn asking_gibberish() {
-    process_response_case("fffbbcbeab?", "Sure.");
+fn personal_top_three_empty() {
+    let high_scores = HighScores::new(&[]);
+    assert!(high_scores.personal_top_three().is_empty());
 }
-#[test]
-/// question with no letters
-fn question_with_no_letters() {
-    process_response_case("4?", "Sure.");
-}
-#[test]
-/// no letters
-fn no_letters() {
-    process_response_case("1, 2, 3", "Whatever.");
-}
-#[test]
-/// statement containing question mark
-fn statement_containing_question_mark() {
-    process_response_case("Ending with ? means a question.", "Whatever.");
-}
-//NEW
-#[test]
-/// multiple line question
-fn multiple_line_question() {
-    process_response_case(
-        "\rDoes this cryogenic chamber make me look fat?\rNo.",
-        "Whatever.",
-    );
-}
-#[test]
-/// non-question ending with whitespace
-fn nonquestion_ending_with_whitespace() {
-    process_response_case(
-        "This is a statement ending with whitespace      ",
-        "Whatever.",
-    );
-}
-#[test]
-/// shouting
-fn shouting() {
-    process_response_case("WATCH OUT!", "Whoa, chill out!");
-}
-#[test]
-/// non-letters with question
-fn nonletters_with_question() {
-    process_response_case(":) ?", "Sure.");
-}
-#[test]
-/// shouting gibberish
-fn shouting_gibberish() {
-    process_response_case("FCECDFCAAB", "Whoa, chill out!");
-}
-#[test]
-/// asking a question
-fn asking_a_question() {
-    process_response_case("Does this cryogenic chamber make me look fat?", "Sure.");
-}
-#[test]
-/// asking a numeric question
-fn asking_a_numeric_question() {
-    process_response_case("You are, what, like 15?", "Sure.");
-}
-#[test]
-/// silence
-fn silence() {
-    process_response_case("", "Fine. Be that way!");
-}
-#[test]
-/// starting with whitespace
-fn starting_with_whitespace() {
-    process_response_case("         hmmmmmmm...", "Whatever.");
-}
-#[test]
-/// using acronyms in regular speech
-fn using_acronyms_in_regular_speech() {
-    process_response_case(
-        "It's OK if you don't want to go work for NASA.",
-        "Whatever.",
-    );
-}
-#[test]
-/// alternate silence
-fn alternate_silence() {
-    process_response_case("										", "Fine. Be that way!");
-}
-#[test]
-/// prolonged silence
-fn prolonged_silence() {
-    process_response_case("          ", "Fine. Be that way!");
-}
-
-
-  
 
 }
 
