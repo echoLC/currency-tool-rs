@@ -1,40 +1,37 @@
-pub fn brackets_are_balanced(string: &str) -> bool {
-    let mut stack: Vec<char> = Vec::new();
-    let mut end_stack: Vec<char> = Vec::new();
+enum Bracket {
+    Open(char),
+    Close(char)
+}
 
-    for c in string.chars() {
-        if c == '[' || c == '{' || c == '(' {
-            stack.push(c);
-        } else {
-            if !stack.is_empty() {
-                let last_value = *stack.last().unwrap(); 
-
-                if c == ')' {
-                    if last_value == '(' {
-                        stack.pop();
-                    } else {
-                        end_stack.push(c);
-                    }
-                }
-            
-                if c == '}' && last_value == '{' {
-                    stack.pop();
-                }
-            
-                if c == ']' && last_value == '[' {
-                    if last_value == '[' {
-                        stack.pop();
-                    }
-                }
-            } else {
-                if c == ']' || c == '}' || c == ')' {
-                    end_stack.push(c);
-                }
-            }
+impl Bracket {
+    pub fn from_char(c: char) -> Option<Bracket> {
+        match c {
+            '{' | '[' | '(' => Some(Bracket::Open(c)),
+            '}' => Some(Bracket::Close('{')),
+            ']' => Some(Bracket::Close('[')),
+            ')' => Some(Bracket::Close('(')),
+            _ => None
         }
     }
+}
 
-    return stack.is_empty() && end_stack.is_empty();
+pub fn brackets_are_balanced(string: &str) -> bool {
+    let mut brackets_stack: Vec<char> = Vec::new();
+
+    for c in string.chars() {
+        match Bracket::from_char(c) {
+            Some(Bracket::Open(open_bracket)) => {
+                brackets_stack.push(open_bracket);
+            },
+            Some(Bracket::Close(close_bracket)) => {
+                if brackets_stack.pop() != Some(close_bracket) {
+                    return false
+                }
+            }, 
+            _ => {}
+        }
+    }    
+    return brackets_stack.is_empty();
 }
 
 
