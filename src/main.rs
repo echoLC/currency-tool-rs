@@ -1,45 +1,45 @@
-#[derive(Debug)]
-pub struct HighScores {
-    scores: Vec<u32>
-}
+pub fn brackets_are_balanced(string: &str) -> bool {
+    let mut stack: Vec<char> = Vec::new();
+    let mut end_stack: Vec<char> = Vec::new();
 
-impl HighScores {
-    pub fn new(scores: &[u32]) -> Self {
-        HighScores{
-            scores: scores.to_vec()
+    for c in string.chars() {
+        if c == '[' || c == '{' || c == '(' {
+            stack.push(c);
+        } else {
+            if !stack.is_empty() {
+                let last_value = *stack.last().unwrap(); 
+
+                if c == ')' {
+                    if last_value == '(' {
+                        stack.pop();
+                    } else {
+                        end_stack.push(c);
+                    }
+                }
+            
+                if c == '}' && last_value == '{' {
+                    stack.pop();
+                }
+            
+                if c == ']' && last_value == '[' {
+                    if last_value == '[' {
+                        stack.pop();
+                    }
+                }
+            } else {
+                if c == ']' || c == '}' || c == ')' {
+                    end_stack.push(c);
+                }
+            }
         }
     }
 
-    pub fn scores(&self) -> &[u32] {
-        &self.scores
-    }
-
-    pub fn latest(&self) -> Option<u32> {
-        self.scores().last().copied()
-    }
-
-    pub fn personal_best(&self) -> Option<u32> {
-        let scores = *(&self.scores());
-
-        scores.iter().max().copied()
-    }
-
-    pub fn personal_top_three(&self) -> Vec<u32> {
-        let mut scores = self.scores.to_vec();
-
-        scores.sort_by(|a, b| a.cmp(b).reverse());
-        scores.truncate(3);
-
-        scores
-    }
+    return stack.is_empty() && end_stack.is_empty();
 }
 
 
 fn main() {
-    let expected = [30, 70];
-    let high_scores = HighScores::new(&expected);
-
-    println!("{:?}", high_scores.personal_top_three());
+    println!("{}", brackets_are_balanced("{[)][]}"));
 }
 
 #[cfg(test)]
@@ -47,62 +47,85 @@ mod tests {
 
   use super::*;
 
-#[test]
-fn list_of_scores() {
-    let expected = [30, 50, 20, 70];
-    let high_scores = HighScores::new(&expected);
-    assert_eq!(high_scores.scores(), &expected);
+  #[test]
+fn paired_square_brackets() {
+    assert!(brackets_are_balanced("[]"));
 }
 #[test]
-fn latest_score() {
-    let high_scores = HighScores::new(&[100, 0, 90, 30]);
-    assert_eq!(high_scores.latest(), Some(30));
+fn empty_string() {
+    assert!(brackets_are_balanced(""));
 }
 #[test]
-fn latest_score_empty() {
-    let high_scores = HighScores::new(&[]);
-    assert_eq!(high_scores.latest(), None);
+fn unpaired_brackets() {
+    assert!(!brackets_are_balanced("[["));
 }
 #[test]
-fn personal_best() {
-    let high_scores = HighScores::new(&[40, 100, 70]);
-    assert_eq!(high_scores.personal_best(), Some(100));
+fn wrong_ordered_brackets() {
+    assert!(!brackets_are_balanced("}{"));
 }
 #[test]
-fn personal_best_empty() {
-    let high_scores = HighScores::new(&[]);
-    assert_eq!(high_scores.personal_best(), None);
+fn wrong_closing_bracket() {
+    assert!(!brackets_are_balanced("{]"));
 }
 #[test]
-fn personal_top_three() {
-    let high_scores = HighScores::new(&[10, 30, 90, 30, 100, 20, 10, 0, 30, 40, 40, 70, 70]);
-    assert_eq!(high_scores.personal_top_three(), vec![100, 90, 70]);
+fn paired_with_whitespace() {
+    assert!(brackets_are_balanced("{ }"));
 }
 #[test]
-fn personal_top_three_highest_to_lowest() {
-    let high_scores = HighScores::new(&[20, 10, 30]);
-    assert_eq!(high_scores.personal_top_three(), vec![30, 20, 10]);
+fn partially_paired_brackets() {
+    assert!(!brackets_are_balanced("{[])"));
 }
 #[test]
-fn personal_top_three_with_tie() {
-    let high_scores = HighScores::new(&[40, 20, 40, 30]);
-    assert_eq!(high_scores.personal_top_three(), vec![40, 40, 30]);
+fn simple_nested_brackets() {
+    assert!(brackets_are_balanced("{[]}"));
 }
 #[test]
-fn personal_top_three_with_less_than_three_scores() {
-    let high_scores = HighScores::new(&[30, 70]);
-    assert_eq!(high_scores.personal_top_three(), vec![70, 30]);
+fn several_paired_brackets() {
+    assert!(brackets_are_balanced("{}[]"));
 }
 #[test]
-fn personal_top_three_only_one_score() {
-    let high_scores = HighScores::new(&[40]);
-    assert_eq!(high_scores.personal_top_three(), vec![40]);
+fn paired_and_nested_brackets() {
+    assert!(brackets_are_balanced("([{}({}[])])"));
 }
 #[test]
-fn personal_top_three_empty() {
-    let high_scores = HighScores::new(&[]);
-    assert!(high_scores.personal_top_three().is_empty());
+fn unopened_closing_brackets() {
+    assert!(!brackets_are_balanced("{[)][]}"));
 }
+#[test]
+fn unpaired_and_nested_brackets() {
+    assert!(!brackets_are_balanced("([{])"));
+}
+#[test]
+fn paired_and_wrong_nested_brackets() {
+    assert!(!brackets_are_balanced("[({]})"));
+}
+#[test]
+fn paired_and_incomplete_brackets() {
+    assert!(!brackets_are_balanced("{}["));
+}
+#[test]
+fn too_many_closing_brackets() {
+    assert!(!brackets_are_balanced("[]]"));
+}
+#[test]
+fn early_incomplete_brackets() {
+    assert!(!brackets_are_balanced(")()"));
+}
+#[test]
+fn early_mismatched_brackets() {
+    assert!(!brackets_are_balanced("{)()"));
+}
+#[test]
+fn math_expression() {
+    assert!(brackets_are_balanced("(((185 + 223.85) * 15) - 543)/2"));
+}
+#[test]
+fn complex_latex_expression() {
+    let input = "\\left(\\begin{array}{cc} \\frac{1}{3} & x\\\\ \\mathrm{e}^{x} &... x^2 \
+                 \\end{array}\\right)";
+    assert!(brackets_are_balanced(input));
+}
+  
 
 }
 
