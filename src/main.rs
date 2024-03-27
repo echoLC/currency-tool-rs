@@ -1,42 +1,36 @@
-enum Bracket {
-    Open(char),
-    Close(char)
-}
+pub fn collatz(n: u64) -> Option<u64> {
 
-impl Bracket {
-    pub fn from_char(c: char) -> Option<Bracket> {
-        match c {
-            '{' | '[' | '(' => Some(Bracket::Open(c)),
-            '}' => Some(Bracket::Close('{')),
-            ']' => Some(Bracket::Close('[')),
-            ')' => Some(Bracket::Close('(')),
-            _ => None
-        }
+    if n == 0 {
+        return None;
     }
-}
 
-pub fn brackets_are_balanced(string: &str) -> bool {
-    let mut brackets_stack: Vec<char> = Vec::new();
+    let mut new_value = n;
+    let mut count: u64 = 0;
 
-    for c in string.chars() {
-        match Bracket::from_char(c) {
-            Some(Bracket::Open(open_bracket)) => {
-                brackets_stack.push(open_bracket);
-            },
-            Some(Bracket::Close(close_bracket)) => {
-                if brackets_stack.pop() != Some(close_bracket) {
-                    return false
-                }
-            }, 
-            _ => {}
+    while new_value != 1 {
+        if new_value % 2 == 0 {
+            new_value = new_value / 2;
+        } else {
+            // overflow in runtime possibly，return directly
+            if new_value.checked_mul(3) == None || new_value.checked_mul(3).unwrap().checked_add(1) == None {
+                return None;
+            } else {
+                new_value = new_value * 3 + 1; 
+            }
         }
-    }    
-    return brackets_stack.is_empty();
+
+        count = count + 1;
+    }
+
+    Some(count)
 }
 
 
 fn main() {
-    println!("{}", brackets_are_balanced("{[)][]}"));
+    let x: u8 = 10;
+
+    let v = x.checked_add(u8::MAX).unwrap_or(0);
+    println!("{}", v)
 }
 
 #[cfg(test)]
@@ -45,84 +39,40 @@ mod tests {
   use super::*;
 
   #[test]
-fn paired_square_brackets() {
-    assert!(brackets_are_balanced("[]"));
+fn one() {
+    assert_eq!(Some(0), collatz(1));
 }
 #[test]
-fn empty_string() {
-    assert!(brackets_are_balanced(""));
+fn sixteen() {
+    assert_eq!(Some(4), collatz(16));
 }
 #[test]
-fn unpaired_brackets() {
-    assert!(!brackets_are_balanced("[["));
+fn twelve() {
+    assert_eq!(Some(9), collatz(12));
 }
 #[test]
-fn wrong_ordered_brackets() {
-    assert!(!brackets_are_balanced("}{"));
+fn one_million() {
+    assert_eq!(Some(152), collatz(1_000_000));
 }
 #[test]
-fn wrong_closing_bracket() {
-    assert!(!brackets_are_balanced("{]"));
+fn zero() {
+    assert_eq!(None, collatz(0));
 }
 #[test]
-fn paired_with_whitespace() {
-    assert!(brackets_are_balanced("{ }"));
+fn test_110243094271() {
+    let val = 110243094271;
+    assert_eq!(None, collatz(val));
 }
 #[test]
-fn partially_paired_brackets() {
-    assert!(!brackets_are_balanced("{[])"));
+fn max_div_3() {
+    let max = u64::MAX / 3;
+    assert_eq!(None, collatz(max));
 }
 #[test]
-fn simple_nested_brackets() {
-    assert!(brackets_are_balanced("{[]}"));
-}
-#[test]
-fn several_paired_brackets() {
-    assert!(brackets_are_balanced("{}[]"));
-}
-#[test]
-fn paired_and_nested_brackets() {
-    assert!(brackets_are_balanced("([{}({}[])])"));
-}
-#[test]
-fn unopened_closing_brackets() {
-    assert!(!brackets_are_balanced("{[)][]}"));
-}
-#[test]
-fn unpaired_and_nested_brackets() {
-    assert!(!brackets_are_balanced("([{])"));
-}
-#[test]
-fn paired_and_wrong_nested_brackets() {
-    assert!(!brackets_are_balanced("[({]})"));
-}
-#[test]
-fn paired_and_incomplete_brackets() {
-    assert!(!brackets_are_balanced("{}["));
-}
-#[test]
-fn too_many_closing_brackets() {
-    assert!(!brackets_are_balanced("[]]"));
-}
-#[test]
-fn early_incomplete_brackets() {
-    assert!(!brackets_are_balanced(")()"));
-}
-#[test]
-fn early_mismatched_brackets() {
-    assert!(!brackets_are_balanced("{)()"));
-}
-#[test]
-fn math_expression() {
-    assert!(brackets_are_balanced("(((185 + 223.85) * 15) - 543)/2"));
-}
-#[test]
-fn complex_latex_expression() {
-    let input = "\\left(\\begin{array}{cc} \\frac{1}{3} & x\\\\ \\mathrm{e}^{x} &... x^2 \
-                 \\end{array}\\right)";
-    assert!(brackets_are_balanced(input));
-}
+fn max_minus_1() {
+    let max = u64::MAX - 1;
+    assert_eq!(None, collatz(max));
+}  
   
-
 }
 
