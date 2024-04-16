@@ -1,22 +1,20 @@
-pub fn series(digits: &str, len: usize) -> Vec<String> {
-    let mut result: Vec<String> = Vec::new();
-    let max_len = digits.len();
-    let mut i = 0;
+pub fn egg_count(display_value: u32) -> usize {
+    let binary_str = format!("{:b}", display_value);
+    let mut count = 0;
 
-    while i + len <= max_len {
-        result.push(digits[i..i + len].to_string());
-        i = i + 1;
+    for c in binary_str.chars() {
+        if c == '1' {
+            count += 1;
+        }
     }
 
-    result
+    count
 }
 
 
 fn main() {
-    let input = "1";
-    let length = 1;
-    let output = series(input, length);
-    println!("{:?}", output);
+    let res = format!("{:b}", 16);
+    println!("{}", res);
 }
 
 #[cfg(test)]
@@ -25,77 +23,31 @@ mod tests {
   use super::*;
 
   #[test]
-fn slices_of_one_from_one() {
-    let input = "1";
-    let length = 1;
-    let output = series(input, length);
-    let expected = &["1"];
+fn test_0_eggs() {
+    let input = 0;
+    let output = egg_count(input);
+    let expected = 0;
     assert_eq!(output, expected);
 }
 #[test]
-fn slices_of_one_from_two() {
-    let input = "12";
-    let length = 1;
-    let output = series(input, length);
-    let expected = &["1", "2"];
+fn test_1_egg() {
+    let input = 16;
+    let output = egg_count(input);
+    let expected = 1;
     assert_eq!(output, expected);
 }
 #[test]
-fn slices_of_two() {
-    let input = "35";
-    let length = 2;
-    let output = series(input, length);
-    let expected = &["35"];
+fn test_4_eggs() {
+    let input = 89;
+    let output = egg_count(input);
+    let expected = 4;
     assert_eq!(output, expected);
 }
 #[test]
-fn slices_of_two_overlap() {
-    let input = "9142";
-    let length = 2;
-    let output = series(input, length);
-    let expected = &["91", "14", "42"];
-    assert_eq!(output, expected);
-}
-#[test]
-fn slices_can_include_duplicates() {
-    let input = "777777";
-    let length = 3;
-    let output = series(input, length);
-    let expected = &["777", "777", "777", "777"];
-    assert_eq!(output, expected);
-}
-#[test]
-fn slices_of_a_long_series() {
-    let input = "918493904243";
-    let length = 5;
-    let output = series(input, length);
-    let expected = &[
-        "91849", "18493", "84939", "49390", "93904", "39042", "90424", "04243",
-    ];
-    assert_eq!(output, expected);
-}
-#[test]
-fn slice_length_is_too_large() {
-    let input = "12345";
-    let length = 6;
-    let output = series(input, length);
-    let expected: &[&str] = &[];
-    assert_eq!(output, expected);
-}
-#[test]
-fn slice_length_is_way_too_large() {
-    let input = "12345";
-    let length = 42;
-    let output = series(input, length);
-    let expected: &[&str] = &[];
-    assert_eq!(output, expected);
-}
-#[test]
-fn empty_series_is_invalid() {
-    let input = "";
-    let length = 1;
-    let output = series(input, length);
-    let expected: &[&str] = &[];
+fn test_13_eggs() {
+    let input = 2000000000;
+    let output = egg_count(input);
+    let expected = 13;
     assert_eq!(output, expected);
 }
 
